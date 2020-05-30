@@ -11,3 +11,11 @@
 Not tested with Mindframe Prime. If you get driver errors, try restarting your computer and ensure the headset is plugged in. Also try installing their software first (may be required to get drivers)
 
 Windows Smartscreen may block the exe. Hit "More info" and press "Run anyway" to get around it.
+
+## Screenshots
+
+![](https://i.imgur.com/XMK6SM9.png)
+
+![](https://i.imgur.com/lzGeqpH.png)
+
+![](https://i.imgur.com/1VfpX0c.png)
