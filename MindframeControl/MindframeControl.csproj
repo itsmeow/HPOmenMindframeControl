@@ -55,11 +55,53 @@
     <ApplicationIcon>Resources\exeicon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AnalyticsLibrary">
+      <HintPath>..\libs\AnalyticsLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="AnalyticsSDK">
+      <HintPath>..\libs\AnalyticsSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSIoTCppCLR">
+      <HintPath>..\libs\AWSIoTCppCLR.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.CognitoIdentity">
+      <HintPath>..\libs\AWSSDK.CognitoIdentity.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\libs\AWSSDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.S3">
+      <HintPath>..\libs\AWSSDK.S3.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.SecurityToken">
+      <HintPath>..\libs\AWSSDK.SecurityToken.dll</HintPath>
+    </Reference>
+    <Reference Include="CommonServiceLocator">
+      <HintPath>..\libs\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="ConfigSDK">
+      <HintPath>..\libs\ConfigSDK.dll</HintPath>
+    </Reference>
     <Reference Include="Costura, Version=4.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
     </Reference>
+    <Reference Include="Cryptography">
+      <HintPath>..\libs\Cryptography.dll</HintPath>
+    </Reference>
     <Reference Include="Cyotek.Windows.Forms.ColorPicker, Version=1.0.0.0, Culture=neutral, PublicKeyToken=58daa28b0b2de221, processorArchitecture=MSIL">
       <HintPath>..\packages\Cyotek.Windows.Forms.ColorPicker.1.7.2\lib\net35\Cyotek.Windows.Forms.ColorPicker.dll</HintPath>
+    </Reference>
+    <Reference Include="GoogleAnalytics.Core">
+      <HintPath>..\libs\GoogleAnalytics.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="HIDSDK">
+      <HintPath>..\libs\HIDSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="HomeInfoSDK">
+      <HintPath>..\libs\HomeInfoSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="HP.Login">
+      <HintPath>..\libs\HP.Login.dll</HintPath>
     </Reference>
     <Reference Include="HP.Omen.AccessoryHeadsetCoolingModule">
       <HintPath>..\libs\HP.Omen.AccessoryHeadsetCoolingModule.dll</HintPath>
@@ -67,10 +109,90 @@
     <Reference Include="HP.Omen.AccessoryHeadsetLightingModule">
       <HintPath>..\libs\HP.Omen.AccessoryHeadsetLightingModule.dll</HintPath>
     </Reference>
+    <Reference Include="HP.Omen.CommonDataStructure">
+      <HintPath>..\libs\HP.Omen.CommonDataStructure.dll</HintPath>
+    </Reference>
+    <Reference Include="HP.Omen.CommonUILib">
+      <HintPath>..\libs\HP.Omen.CommonUILib.dll</HintPath>
+    </Reference>
+    <Reference Include="HP.Omen.DeviceLib">
+      <HintPath>..\libs\HP.Omen.DeviceLib.dll</HintPath>
+    </Reference>
+    <Reference Include="HP.Omen.OmenCommonLib">
+      <HintPath>..\libs\HP.Omen.OmenCommonLib.dll</HintPath>
+    </Reference>
+    <Reference Include="HPCommonUtillties">
+      <HintPath>..\libs\HPCommonUtillties.dll</HintPath>
+    </Reference>
+    <Reference Include="HttpMultipartParser">
+      <HintPath>..\libs\HttpMultipartParser.dll</HintPath>
+    </Reference>
+    <Reference Include="IntelXTUSDK">
+      <HintPath>..\libs\IntelXTUSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="IsHPSDK">
+      <HintPath>..\libs\IsHPSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="LauncherSDK">
+      <HintPath>..\libs\LauncherSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Logging">
+      <HintPath>..\libs\Logging.dll</HintPath>
+    </Reference>
     <Reference Include="McuHeadSetSDK">
       <HintPath>..\libs\McuHeadSetSDK.dll</HintPath>
     </Reference>
+    <Reference Include="McuKeyboardLightingSDK">
+      <HintPath>..\libs\McuKeyboardLightingSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="McuSDK2">
+      <HintPath>..\libs\McuSDK2.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.SemanticLogging">
+      <HintPath>..\libs\Microsoft.Practices.EnterpriseLibrary.SemanticLogging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.SemanticLogging.TextFile">
+      <HintPath>..\libs\Microsoft.Practices.EnterpriseLibrary.SemanticLogging.TextFile.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Toolkit.Uwp.Notifications">
+      <HintPath>..\libs\Microsoft.Toolkit.Uwp.Notifications.dll</HintPath>
+    </Reference>
+    <Reference Include="Moserware.SecretSplitter">
+      <HintPath>..\libs\Moserware.SecretSplitter.dll</HintPath>
+    </Reference>
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\libs\netstandard.dll</HintPath>
+    </Reference>
+    <Reference Include="Networking">
+      <HintPath>..\libs\Networking.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OmenControls">
+      <HintPath>..\libs\OmenControls.dll</HintPath>
+    </Reference>
+    <Reference Include="PolicySDK">
+      <HintPath>..\libs\PolicySDK.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework" />
+    <Reference Include="Prism">
+      <HintPath>..\libs\Prism.dll</HintPath>
+    </Reference>
+    <Reference Include="Prism.Wpf">
+      <HintPath>..\libs\Prism.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="RpcClient">
+      <HintPath>..\libs\RpcClient.dll</HintPath>
+    </Reference>
+    <Reference Include="SmbiosSDK">
+      <HintPath>..\libs\SmbiosSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Storage">
+      <HintPath>..\libs\Storage.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -81,6 +203,21 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="TimeUtilities">
+      <HintPath>..\libs\TimeUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsDisplayAPI">
+      <HintPath>..\libs\WindowsDisplayAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsRegistrySDK">
+      <HintPath>..\libs\WindowsRegistrySDK.dll</HintPath>
+    </Reference>
+    <Reference Include="WMISDK">
+      <HintPath>..\libs\WMISDK.dll</HintPath>
+    </Reference>
+    <Reference Include="WpfAnimatedGif">
+      <HintPath>..\libs\WpfAnimatedGif.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColorList.cs">
