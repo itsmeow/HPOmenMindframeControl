@@ -8,9 +8,11 @@
 
 ## More info
 
-Not tested with Mindframe Prime. If you get driver errors, try restarting your computer and ensure the headset is plugged in. Also try installing their software first (may be required to get drivers)
+Tested and functional with Mindframe and Mindframe Prime headsets. If you get driver errors, try restarting your computer and ensure the headset is plugged in. Also try installing their software first (may be required to get drivers)
 
-Windows Smartscreen may block the exe. Hit "More info" and press "Run anyway" to get around it.
+Supports having one Mindframe and one Mindframe Prime connected simultaneously, however you will not be able to use the Audio section (HP's own software has this limitation as well, except it doesn't hide the Audio tab).
+
+**Windows Smartscreen may block the exe.** Hit "More info" and press "Run anyway" to get around it.
 
 ## Screenshots
 
