@@ -21,9 +21,17 @@ namespace MindframeControl
     public partial class MainControl : Form
     {
         private int hidIndex = 0;
+        private int hidIndex_regular = 0;
+        private int hidIndex_prime = 0;
+        private OMENHeadsets currentHeadset;
+        private const int HEIGHT_NO_SELECT = 261;
+        private const int HEIGHT_SELECT = 280;
+        private const int WIDTH_NO_SELECT = 905;
+        private const int WIDTH_SELECT = 504;
         private const int MINDFRAME_PID = 10305;
+        private const int MINDFRAME_PRIME_PID = 12865;
         private const int MINDFRAME_VID = 1008;
-        private const string REGISTRY_PATH = "SOFTWARE\\its_meow\\OMEN_CONTROL";
+        private string REGISTRY_PATH = "SOFTWARE\\its_meow\\OMEN_CONTROL";
         private Font REGULAR_FONT;
         private Font BOLD_FONT;
         private List<Color> defaultAnimationColorsC = new List<Color>()
@@ -51,31 +59,68 @@ namespace MindframeControl
             await setCooling(mode);
         }
 
+        private void setHeadset(OMENHeadsets headset)
+        {
+            currentHeadset = headset;
+            hidIndex = headset == OMENHeadsets.Mindframe ? hidIndex_regular : hidIndex_prime;
+            REGISTRY_PATH = "SOFTWARE\\its_meow\\OMEN_CONTROL" + (headset == OMENHeadsets.MindframePrime ? "\\PRIME" : "");
+        }
+
+        private void setMultiMode(bool on)
+        {
+            this.Height = on ? HEIGHT_SELECT : HEIGHT_NO_SELECT;
+            this.Width = on ? WIDTH_SELECT : WIDTH_NO_SELECT;
+            this.lblSelectHeadset.Visible = on;
+            this.headsetBox.Visible = on;
+            this.audioGroupBox.Visible = !on;
+        }
+
         private async void MainControl_Load(object sender, EventArgs e)
         {
-            hidIndex = await AccessoryHeadSetHelper.Initialize(MINDFRAME_PID, MINDFRAME_VID, string.Empty);
+            hidIndex_regular = await AccessoryHeadSetHelper.Initialize(MINDFRAME_PID, MINDFRAME_VID, string.Empty);
+            hidIndex_prime = await AccessoryHeadSetHelper.Initialize(MINDFRAME_PRIME_PID, MINDFRAME_VID, string.Empty);
+            if (hidIndex_regular != -1 && hidIndex_prime != -1)
+            {
+                await AccessoryHeadSetHelper.UnInitialize(hidIndex_prime);
+                setMultiMode(true);
+                this.headsetBox.SelectedIndex = (int) OMENHeadsets.Mindframe;
+            } else if(hidIndex_regular == -1 && hidIndex_prime == -1)
+            {
+                MessageBox.Show("Could not find any Mindframe devices.");
+                Environment.Exit(1);
+            } else
+            {
+                setMultiMode(false);
+                setHeadset(hidIndex_regular != -1 ? OMENHeadsets.Mindframe : OMENHeadsets.MindframePrime);
+                initHeadset();
+            }
+        }
+
+        private async void initHeadset()
+        {
             HeadSetCoolingModes coolingMode = GetCoolingLevelFromRegistry();
             Color staticColor = GetColorRegistry();
             staticColorPanel.BackColor = staticColor;
             CoolingBar.Value = (int)coolingMode;
             await setCooling(coolingMode);
             HeadsetLightingEnum lightMode = GetLightModeRegistry();
-            colorModeBox.SelectedIndex = (int) lightMode;
+            colorModeBox.SelectedIndex = (int)lightMode;
 
-
-            ResultCodes result = AccessoryHeadsetDriverHelper.InitializeDriverWithGuid(OMENHeadsets.Mindframe, new Guid("{947D0033-02A6-48FB-AD23-47407B97D158}"));
+            ResultCodes result = AccessoryHeadsetDriverHelper.InitializeDriverWithGuid(currentHeadset, new Guid("{947D0033-02A6-48FB-AD23-47407B97D158}"));
             checkErrors(result);
             updateVolumes();
             surroundCheckBox.Checked = getSpeakerFeature(SpeakerFeatures.Surround);
             surroundMaxCheckBox.Checked = getSpeakerFeature(SpeakerFeatures.SurroundMax);
             dynamicBassCheckBox.Checked = getSpeakerFeature(SpeakerFeatures.DynamicBass);
-            AccessoryHeadsetDriverHelper.RegisterAudioVolumeCallBack(OMENHeadsets.Mindframe, new OMENAudioVolumeCallback(this.AudioLevelCallBack));
+            encCheckBox.Checked = getMicFeature(MicrophoneFeatures.EnvironmentalNoiseCancellation);
+            encCheckBox.Visible = currentHeadset == OMENHeadsets.MindframePrime;
+            AccessoryHeadsetDriverHelper.RegisterAudioVolumeCallBack(currentHeadset, new OMENAudioVolumeCallback(this.AudioLevelCallBack));
         }
 
         private async void MainControl_Close(object sender, EventArgs e)
         {
             await AccessoryHeadSetHelper.UnInitialize(hidIndex);
-            ResultCodes result = AccessoryHeadsetDriverHelper.UnInitializeDriver(OMENHeadsets.Mindframe);
+            ResultCodes result = AccessoryHeadsetDriverHelper.UnInitializeDriver(currentHeadset);
             checkErrors(result);
         }
 
@@ -102,6 +147,11 @@ namespace MindframeControl
         private void DynamicBassCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             setSpeakerFeature(SpeakerFeatures.DynamicBass, dynamicBassCheckBox.Checked);
+        }
+
+        private void EncCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            setMicFeature(MicrophoneFeatures.EnvironmentalNoiseCancellation, encCheckBox.Checked);
         }
 
         private async void btnStaticColor_Click(object sender, EventArgs e)
@@ -319,8 +369,15 @@ namespace MindframeControl
         {
 
             bool enable = false;
-            ResultCodes result = AccessoryHeadsetDriverHelper.GetMicrophoneFeatureEnable(OMENHeadsets.Mindframe, micFeature, out enable);
-            checkErrors(result);
+            if (micFeature == MicrophoneFeatures.EnvironmentalNoiseCancellation)
+            {
+                enable = GetBoolRegistry(micFeature.ToString(), false);
+            }
+            else
+            {
+                ResultCodes result = AccessoryHeadsetDriverHelper.GetMicrophoneFeatureEnable(currentHeadset, micFeature, out enable);
+                checkErrors(result);
+            }
             return enable;
         }
 
@@ -334,7 +391,7 @@ namespace MindframeControl
                 enable = GetBoolRegistry(feature.ToString(), false);
             } else
             {
-                ResultCodes result = AccessoryHeadsetDriverHelper.GetSpeakerFeatureEnable(OMENHeadsets.Mindframe, feature, out enable);
+                ResultCodes result = AccessoryHeadsetDriverHelper.GetSpeakerFeatureEnable(currentHeadset, feature, out enable);
                 checkErrors(result);
             }
             return enable;
@@ -375,7 +432,7 @@ namespace MindframeControl
             float value = (float)(newValue / 100.0);
             if (type == AudioLevels.Headphone)
             {
-                ResultCodes result = AccessoryHeadsetDriverHelper.SetSpeakerVolumeValue(OMENHeadsets.Mindframe, new VolumeChannel()
+                ResultCodes result = AccessoryHeadsetDriverHelper.SetSpeakerVolumeValue(currentHeadset, new VolumeChannel()
                 {
                     ChannelIndex = OMENVolumeChannels.Master,
                     ChannelValue = value
@@ -384,7 +441,7 @@ namespace MindframeControl
             }
             else if (type == AudioLevels.Mic)
             {
-                ResultCodes result = AccessoryHeadsetDriverHelper.SetMicrophoneVolumeValue(OMENHeadsets.Mindframe, new VolumeChannel()
+                ResultCodes result = AccessoryHeadsetDriverHelper.SetMicrophoneVolumeValue(currentHeadset, new VolumeChannel()
                 {
                     ChannelIndex = OMENVolumeChannels.Master,
                     ChannelValue = value
@@ -400,20 +457,20 @@ namespace MindframeControl
                 volumeChannel.ChannelIndex = OMENVolumeChannels.FrontLeft;
                 volumeChannel.ChannelValue = value;
                 VolumeChannel sideToneChannel1 = volumeChannel;
-                ResultCodes result = AccessoryHeadsetDriverHelper.SetSideToneVolumeValue(OMENHeadsets.Mindframe, sideToneChannel1);
+                ResultCodes result = AccessoryHeadsetDriverHelper.SetSideToneVolumeValue(currentHeadset, sideToneChannel1);
                 checkErrors(result);
                 volumeChannel = new VolumeChannel();
                 volumeChannel.ChannelIndex = OMENVolumeChannels.FrontRight;
                 volumeChannel.ChannelValue = value;
                 VolumeChannel sideToneChannel2 = volumeChannel;
-                ResultCodes result2 = AccessoryHeadsetDriverHelper.SetSideToneVolumeValue(OMENHeadsets.Mindframe, sideToneChannel2);
+                ResultCodes result2 = AccessoryHeadsetDriverHelper.SetSideToneVolumeValue(currentHeadset, sideToneChannel2);
                 checkErrors(result2);
             }
         }
 
         public void setSpeakerMuted(bool isMute)
         {
-            ResultCodes result = AccessoryHeadsetDriverHelper.SetSpeakerIsMuted(OMENHeadsets.Mindframe, isMute);
+            ResultCodes result = AccessoryHeadsetDriverHelper.SetSpeakerIsMuted(currentHeadset, isMute);
             if (checkErrors(result))
             {
                 SetBoolRegistry("SpeakerMuted", isMute);
@@ -422,7 +479,7 @@ namespace MindframeControl
 
         public void setSidetoneMuted(bool isMute)
         {
-            ResultCodes result = AccessoryHeadsetDriverHelper.SetSideToneIsMuted(OMENHeadsets.Mindframe, isMute);
+            ResultCodes result = AccessoryHeadsetDriverHelper.SetSideToneIsMuted(currentHeadset, isMute);
             if(checkErrors(result))
             {
                 SetBoolRegistry("SidetoneMuted", isMute);
@@ -431,7 +488,7 @@ namespace MindframeControl
 
         public void setMicMuted(bool isMute)
         {
-            ResultCodes result = AccessoryHeadsetDriverHelper.SetMicrophoneIsMuted(OMENHeadsets.Mindframe, isMute);
+            ResultCodes result = AccessoryHeadsetDriverHelper.SetMicrophoneIsMuted(currentHeadset, isMute);
             if(checkErrors(result))
             {
                 SetBoolRegistry("MicMuted", isMute);
@@ -440,7 +497,7 @@ namespace MindframeControl
 
         public void setSpeakerFeature(SpeakerFeatures feature, bool enabled)
         {
-            ResultCodes result = AccessoryHeadsetDriverHelper.SetSpeakerFeatureEnable(OMENHeadsets.Mindframe, feature, enabled);
+            ResultCodes result = AccessoryHeadsetDriverHelper.SetSpeakerFeatureEnable(currentHeadset, feature, enabled);
             if (checkErrors(result)) {
                 SetBoolRegistry(feature.ToString(), enabled);
             }
@@ -448,7 +505,7 @@ namespace MindframeControl
 
         public void setMicFeature(MicrophoneFeatures feature, bool enabled)
         {
-            ResultCodes result = AccessoryHeadsetDriverHelper.SetMicrophoneFeatureEnable(OMENHeadsets.Mindframe, feature, enabled);
+            ResultCodes result = AccessoryHeadsetDriverHelper.SetMicrophoneFeatureEnable(currentHeadset, feature, enabled);
             if(checkErrors(result)){
                 SetBoolRegistry(feature.ToString(), enabled);
             }
@@ -460,19 +517,19 @@ namespace MindframeControl
             switch (v)
             {
                 case AudioLevels.Headphone:
-                    int speakerVolumeValue = (int)AccessoryHeadsetDriverHelper.GetSpeakerVolumeValue(OMENHeadsets.Mindframe, new VolumeChannel()
+                    int speakerVolumeValue = (int)AccessoryHeadsetDriverHelper.GetSpeakerVolumeValue(currentHeadset, new VolumeChannel()
                     {
                         ChannelIndex = OMENVolumeChannels.Master
                     }, out num);
                     break;
                 case AudioLevels.Mic:
-                    int microphoneVolumeValue = (int)AccessoryHeadsetDriverHelper.GetMicrophoneVolumeValue(OMENHeadsets.Mindframe, new VolumeChannel()
+                    int microphoneVolumeValue = (int)AccessoryHeadsetDriverHelper.GetMicrophoneVolumeValue(currentHeadset, new VolumeChannel()
                     {
                         ChannelIndex = OMENVolumeChannels.Master
                     }, out num);
                     break;
                 case AudioLevels.SideTone:
-                    int sideToneVolumeValue = (int)AccessoryHeadsetDriverHelper.GetSideToneVolumeValue(OMENHeadsets.Mindframe, new VolumeChannel()
+                    int sideToneVolumeValue = (int)AccessoryHeadsetDriverHelper.GetSideToneVolumeValue(currentHeadset, new VolumeChannel()
                     {
                         ChannelIndex = OMENVolumeChannels.FrontLeft
                     }, out num);
@@ -616,5 +673,26 @@ namespace MindframeControl
             Mic,
             SideTone,
         }
+
+        private async void HeadsetBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // de-init
+            await AccessoryHeadSetHelper.UnInitialize(hidIndex);
+            ResultCodes result = AccessoryHeadsetDriverHelper.UnInitializeDriver(currentHeadset);
+            // update
+            OMENHeadsets target = (OMENHeadsets)this.headsetBox.SelectedIndex;
+            if (target == OMENHeadsets.Mindframe)
+            {
+                hidIndex_regular = await AccessoryHeadSetHelper.Initialize(MINDFRAME_PID, MINDFRAME_VID, string.Empty);
+            }
+            else
+            {
+                hidIndex_prime = await AccessoryHeadSetHelper.Initialize(MINDFRAME_PRIME_PID, MINDFRAME_VID, string.Empty);
+            }
+            setHeadset(target);
+            // init!
+            initHeadset();
+        }
+
     }
 }

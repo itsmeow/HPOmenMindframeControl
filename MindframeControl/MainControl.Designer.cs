@@ -44,6 +44,7 @@
             this.staticColorPanel = new System.Windows.Forms.Panel();
             this.btnStaticColor = new System.Windows.Forms.Button();
             this.audioGroupBox = new System.Windows.Forms.GroupBox();
+            this.encCheckBox = new System.Windows.Forms.CheckBox();
             this.dynamicBassCheckBox = new System.Windows.Forms.CheckBox();
             this.surroundMaxCheckBox = new System.Windows.Forms.CheckBox();
             this.surroundCheckBox = new System.Windows.Forms.CheckBox();
@@ -56,6 +57,8 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.muteHeadphoneBox = new System.Windows.Forms.CheckBox();
             this.speakerVolumeBar = new System.Windows.Forms.TrackBar();
+            this.headsetBox = new System.Windows.Forms.ComboBox();
+            this.lblSelectHeadset = new System.Windows.Forms.Label();
             this.groupBoxCooling.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CoolingBar)).BeginInit();
             this.groupBoxColor.SuspendLayout();
@@ -258,6 +261,7 @@
             // audioGroupBox
             // 
             this.audioGroupBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.audioGroupBox.Controls.Add(this.encCheckBox);
             this.audioGroupBox.Controls.Add(this.dynamicBassCheckBox);
             this.audioGroupBox.Controls.Add(this.surroundMaxCheckBox);
             this.audioGroupBox.Controls.Add(this.surroundCheckBox);
@@ -272,6 +276,18 @@
             this.audioGroupBox.TabIndex = 7;
             this.audioGroupBox.TabStop = false;
             this.audioGroupBox.Text = "Audio";
+            // 
+            // encCheckBox
+            // 
+            this.encCheckBox.AutoSize = true;
+            this.encCheckBox.Font = new System.Drawing.Font("Arial", 8F);
+            this.encCheckBox.Location = new System.Drawing.Point(294, 107);
+            this.encCheckBox.Name = "encCheckBox";
+            this.encCheckBox.Size = new System.Drawing.Size(84, 32);
+            this.encCheckBox.TabIndex = 15;
+            this.encCheckBox.Text = "Noise\r\nCancellation";
+            this.encCheckBox.UseVisualStyleBackColor = true;
+            this.encCheckBox.CheckedChanged += new System.EventHandler(this.EncCheckBox_CheckedChanged);
             // 
             // dynamicBassCheckBox
             // 
@@ -426,12 +442,38 @@
             this.speakerVolumeBar.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.speakerVolumeBar.Scroll += new System.EventHandler(this.SpeakerVolumeBar_Scroll);
             // 
+            // headsetBox
+            // 
+            this.headsetBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.headsetBox.FormattingEnabled = true;
+            this.headsetBox.Items.AddRange(new object[] {
+            "Mindframe",
+            "Mindframe Prime"});
+            this.headsetBox.Location = new System.Drawing.Point(115, 217);
+            this.headsetBox.Name = "headsetBox";
+            this.headsetBox.Size = new System.Drawing.Size(121, 21);
+            this.headsetBox.TabIndex = 8;
+            this.headsetBox.SelectedIndexChanged += new System.EventHandler(this.HeadsetBox_SelectedIndexChanged);
+            // 
+            // lblSelectHeadset
+            // 
+            this.lblSelectHeadset.AutoSize = true;
+            this.lblSelectHeadset.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSelectHeadset.ForeColor = System.Drawing.SystemColors.Control;
+            this.lblSelectHeadset.Location = new System.Drawing.Point(12, 218);
+            this.lblSelectHeadset.Name = "lblSelectHeadset";
+            this.lblSelectHeadset.Size = new System.Drawing.Size(97, 16);
+            this.lblSelectHeadset.TabIndex = 6;
+            this.lblSelectHeadset.Text = "Select Headset";
+            // 
             // MainControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(20)))), ((int)(((byte)(20)))));
-            this.ClientSize = new System.Drawing.Size(889, 222);
+            this.ClientSize = new System.Drawing.Size(889, 241);
+            this.Controls.Add(this.lblSelectHeadset);
+            this.Controls.Add(this.headsetBox);
             this.Controls.Add(this.audioGroupBox);
             this.Controls.Add(this.groupBoxColor);
             this.Controls.Add(this.groupBoxCooling);
@@ -461,6 +503,7 @@
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.speakerVolumeBar)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -493,6 +536,9 @@
         private System.Windows.Forms.CheckBox surroundCheckBox;
         private System.Windows.Forms.CheckBox dynamicBassCheckBox;
         private System.Windows.Forms.CheckBox surroundMaxCheckBox;
+        private System.Windows.Forms.ComboBox headsetBox;
+        private System.Windows.Forms.Label lblSelectHeadset;
+        private System.Windows.Forms.CheckBox encCheckBox;
     }
 }
 
