@@ -115,6 +115,7 @@ namespace MindframeControl
             encCheckBox.Checked = getMicFeature(MicrophoneFeatures.EnvironmentalNoiseCancellation);
             encCheckBox.Visible = currentHeadset == OMENHeadsets.MindframePrime;
             AccessoryHeadsetDriverHelper.RegisterAudioVolumeCallBack(currentHeadset, new OMENAudioVolumeCallback(this.AudioLevelCallBack));
+            this.Text = "HP Omen Mindframe Control - " + (currentHeadset == OMENHeadsets.MindframePrime ? "OMEN Prime" : "OMEN");
         }
 
         private async void MainControl_Close(object sender, EventArgs e)
@@ -470,28 +471,38 @@ namespace MindframeControl
 
         public void setSpeakerMuted(bool isMute)
         {
-            ResultCodes result = AccessoryHeadsetDriverHelper.SetSpeakerIsMuted(currentHeadset, isMute);
-            if (checkErrors(result))
-            {
-                SetBoolRegistry("SpeakerMuted", isMute);
-            }
+            muteGeneric(AccessoryHeadsetDriverHelper.SetSpeakerIsMuted, "SpeakerMuted", isMute);
         }
 
         public void setSidetoneMuted(bool isMute)
         {
-            ResultCodes result = AccessoryHeadsetDriverHelper.SetSideToneIsMuted(currentHeadset, isMute);
-            if(checkErrors(result))
-            {
-                SetBoolRegistry("SidetoneMuted", isMute);
-            }
+            muteGeneric(AccessoryHeadsetDriverHelper.SetSideToneIsMuted, "SidetoneMuted", isMute);
         }
 
         public void setMicMuted(bool isMute)
         {
-            ResultCodes result = AccessoryHeadsetDriverHelper.SetMicrophoneIsMuted(currentHeadset, isMute);
-            if(checkErrors(result))
+            muteGeneric(AccessoryHeadsetDriverHelper.SetMicrophoneIsMuted, "MicMuted", isMute);
+        }
+
+        private void muteGeneric(Func<OMENHeadsets, Boolean, ResultCodes> function, string regKey, bool isMute)
+        {
+            ResultCodes result = function.Invoke(currentHeadset, isMute);
+            if (checkErrors(result, true))
             {
-                SetBoolRegistry("MicMuted", isMute);
+                SetBoolRegistry(regKey, isMute);
+            }
+            else
+            {
+                ResultCodes result1 = function.Invoke(currentHeadset, !isMute);
+                ResultCodes result2 = function.Invoke(currentHeadset, isMute);
+                if (checkErrors(result1, true) && checkErrors(result2, true))
+                {
+                    SetBoolRegistry(regKey, isMute);
+                }
+                else
+                {
+                    checkErrors(result);
+                }
             }
         }
 
@@ -579,10 +590,18 @@ namespace MindframeControl
 
         private bool checkErrors(ResultCodes error)
         {
+            return checkErrors(error, false);
+        }
+
+        private bool checkErrors(ResultCodes error, bool silent)
+        {
             if(error != ResultCodes.Driver_Success)
             {
-                MessageBox.Show(error.ToString());
-                this.Close();
+                if (!silent)
+                {
+                    MessageBox.Show(error.ToString());
+                    this.Close();
+                }
                 return false;
             }
             return true;
@@ -590,10 +609,18 @@ namespace MindframeControl
 
         private bool checkErrors(HeadSetErrorCode error)
         {
+            return checkErrors(error, false);
+        }
+
+        private bool checkErrors(HeadSetErrorCode error, bool silent)
+        {
             if (error != HeadSetErrorCode.HID_WriteSuccess)
             {
-                MessageBox.Show(error.ToString());
-                this.Close();
+                if (!silent)
+                {
+                    MessageBox.Show(error.ToString());
+                    this.Close();
+                }
                 return false;
             }
             return true;
